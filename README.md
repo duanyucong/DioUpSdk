@@ -1,5 +1,7 @@
 # DioUp Android SDK
 
+[![](https://jitpack.io/v/com.gitee.scenery7f/DioUpSdk.svg)](https://jitpack.io/#com.gitee.scenery7f/DioUpSdk)
+
 `DioUpSdk` 是 DioUp 设备管理平台的 Android Java SDK。核心库位于 `dio_up` 模块，提供设备注册、心跳、后台任务、APK 下载与安装、安装结果验证以及安全 FRP 命令执行能力。
 
 ## 环境要求
@@ -12,7 +14,31 @@
 
 ## 引入 SDK
 
-### 方式一：作为 Gradle 模块引入
+### 方式一：通过 JitPack 引入（推荐）
+
+在宿主工程的 `settings.gradle` 中添加 JitPack 仓库：
+
+```groovy
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+在宿主 App 的 `build.gradle` 中加入：
+
+```groovy
+dependencies {
+    implementation 'com.gitee.scenery7f:DioUpSdk:dio_up:v1.0.0'
+}
+```
+
+> 版本号替换为实际 tag，如 `v1.0.0`。JitPack 会自动构建并发布 AAR。
+
+### 方式二：作为 Gradle 模块引入
 
 将 `dio_up` 模块放入宿主工程，在宿主工程的 `settings.gradle` 中加入：
 
