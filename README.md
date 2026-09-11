@@ -1,6 +1,6 @@
 # DioUp Android SDK
 
-[![](https://jitpack.io/v/com.gitee.scenery7f/DioUpSdk.svg)](https://jitpack.io/#com.gitee.scenery7f/DioUpSdk)
+[![](https://jitpack.io/v/com.github.duanyucong/DioUpSdk.svg)](https://jitpack.io/#com.github.duanyucong/DioUpSdk)
 
 `DioUpSdk` 是 DioUp 设备管理平台的 Android Java SDK。核心库位于 `dio_up` 模块，提供设备注册、心跳、后台任务、APK 下载与安装、安装结果验证以及安全 FRP 命令执行能力。
 
@@ -32,7 +32,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation 'com.gitee.scenery7f:DioUpSdk:dio_up:v1.0.0'
+    implementation 'com.github.duanyucong:DioUpSdk:dio_up:v1.0.0'
 }
 ```
 
