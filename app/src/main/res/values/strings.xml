@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DioUpSdk</string>
+    <!-- 运行示例前替换为真实服务端地址和项目 Key；本地 HTTP 调试需在 AndroidManifest 中开启明文流量。 -->
+    <string name="dio_up_server_url" translatable="false">http://172.16.50.46:8080</string>
+    <string name="dio_up_project_key" translatable="false">prj_wshwjwmykxhu</string>
+    <string name="dio_up_device_name">DioUp Java Sample</string>
+</resources>

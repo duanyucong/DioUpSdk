@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 设备注册、心跳、任务上报和 APK 下载需要网络访问。 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 标准安装 Intent 需要宿主允许安装未知来源应用。 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- FRP 隧道通过前台 dataSync 服务保持运行。 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <!-- 设备重启后按本地 stopped 状态决定是否恢复 FRP。 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application>
+        <!-- 不导出服务，只有宿主进程内部能够启动。 -->
+        <service
+            android:name=".internal.FrpForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- 同时兼容 AOSP 与部分厂商的快速开机广播。 -->
+        <receiver
+            android:name=".internal.FrpBootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 将私有下载目录中的 APK 安全转换为 content:// URI。 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.dioup.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/dio_up_file_paths" />
+        </provider>
+    </application>
+</manifest>

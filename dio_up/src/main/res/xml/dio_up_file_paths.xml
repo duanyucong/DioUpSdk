@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 仅授权 SDK 默认下载子目录，不暴露宿主的整个 files 目录。 -->
+    <files-path name="dio_up_downloads" path="dio_up_downloads/" />
+    <!-- 默认下载目录位于公共外部存储时，授权对应的 dioup 子目录。 -->
+    <external-path name="dioup_downloads" path="dioup/" />
+</paths>

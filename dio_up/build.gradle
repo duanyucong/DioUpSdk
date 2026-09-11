@@ -1,0 +1,64 @@
+plugins {
+    // 产物为可被宿主 App 引用的 Android Library/AAR。
+    alias(libs.plugins.android.library)
+    // JitPack 发布：通过 maven-publish 生成 Maven 构件。
+    id 'maven-publish'
+}
+
+android {
+    namespace 'com.dtcomg.dio_up'
+    compileSdk 35
+
+    defaultConfig {
+        // Java 日期兼容实现使 SDK 可继续支持 Android 7.0。
+        minSdk 24
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        // 全模块使用 Java 11 语法和字节码目标，不再启用 Kotlin 编译器。
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
+}
+
+dependencies {
+    // AppCompat/Material 提供兼容组件，OkHttp 负责设备端 HTTP 通信。
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.okhttp
+    // Worker 负责后台任务，Room 保存下载和安装执行状态。
+    implementation libs.work.runtime
+    implementation libs.room.runtime
+    // Java 源码通过 annotationProcessor 生成 Room 实现，不使用 kapt。
+    annotationProcessor libs.room.compiler
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.dtcomg'
+                artifactId = 'dio-up'
+                version = '1.0.0'
+            }
+        }
+    }
+}
