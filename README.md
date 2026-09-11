@@ -32,7 +32,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation 'com.github.duanyucong:DioUpSdk:dio_up:v1.0.0'
+    implementation 'com.github.duanyucong:DioUpSdk:v1.0.0'
 }
 ```
 
