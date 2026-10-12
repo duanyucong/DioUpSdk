@@ -76,8 +76,18 @@ public final class ManagedFrpSynchronizer {
     }
 
     private static long parseInstant(String value) {
+        if (value == null || value.trim().isEmpty()) return 0;
+        // 先尝试 epoch 毫秒数字
+        try {
+            return Long.parseLong(value.trim());
+        } catch (NumberFormatException ignored) { }
+        // ISO-8601 格式，兼容 0~9 位小数秒
         try {
             Date parsed = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US).parse(value);
+            if (parsed != null) return parsed.getTime();
+        } catch (Exception ignored) { }
+        try {
+            Date parsed = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US).parse(value);
             return parsed == null ? 0 : parsed.getTime();
         } catch (Exception exception) { return 0; }
     }

@@ -528,8 +528,18 @@ public final class DioUpClient {
 
     private static long parseTimestamp(String value) {
         if (value == null || value.trim().isEmpty() || "null".equals(value)) return 0;
+        // 先尝试 epoch 毫秒数字（兼容旧格式或数字时间戳）
+        try {
+            return Long.parseLong(value.trim());
+        } catch (NumberFormatException ignored) { }
+        // ISO-8601 格式，兼容 0~9 位小数秒
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US);
+            Date parsed = format.parse(value);
+            return parsed == null ? 0 : parsed.getTime();
+        } catch (Exception ignored) { }
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US);
             Date parsed = format.parse(value);
             return parsed == null ? 0 : parsed.getTime();
         } catch (Exception ignored) { return 0; }
