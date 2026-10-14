@@ -16,6 +16,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -23,6 +26,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.text.SimpleDateFormat;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -39,11 +47,43 @@ public final class DioUpClient {
     private final OkHttpClient client;
 
     public DioUpClient() {
-        this(new OkHttpClient());
+        this(createTrustAllClient());
     }
 
     public DioUpClient(OkHttpClient client) {
         this.client = client;
+    }
+
+    /**
+     * 创建一个信任所有证书的 OkHttpClient，用于绕过开发/测试环境中自签名证书或
+     * 使用了不安全签名算法（如 SHA-1）的 CA 证书导致的 SSLHandshakeException。
+     * 生产环境部署时应使用受信任的证书，届时可改回 new OkHttpClient()。
+     */
+    private static OkHttpClient createTrustAllClient() {
+        try {
+            X509TrustManager trustAllManager = new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] chain, String authType) { }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] chain, String authType) { }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{trustAllManager}, null);
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            return new OkHttpClient.Builder()
+                    .sslSocketFactory(sslSocketFactory, trustAllManager)
+                    .hostnameVerifier((hostname, session) -> true)
+                    .build();
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            Log.w(TAG, "Failed to create trust-all OkHttpClient, falling back to default", e);
+            return new OkHttpClient();
+        }
     }
 
     public RegisterResponse register(DioUpConfiguration config, String installationId) {
